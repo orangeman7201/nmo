@@ -1,3 +1,3 @@
 class ConditionSerializer < ActiveModel::Serializer
-  attributes :detail, :occurred_date
+  attributes :id, :detail, :occurred_date
 end
