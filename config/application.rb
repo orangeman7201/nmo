@@ -38,14 +38,34 @@ module Sample
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+    config.action_controller.forgery_protection_origin_check = false
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins "*"
-        resource "*",
+        # 本番環境ができたらoriginsに追加する
+        origins 'localhost:3001'
+        resource '*',
           headers: :any,
-          methods: [:get, :post, :options, :head]
+          methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          credentials: true
       end
     end
+    # apiが受け取ったparamsをsnake_caseに変換する
+    ActionDispatch::Request.parameter_parsers[:json] = lambda { |raw_post|
+      # Modified from action_dispatch/http/parameters.rb
+      data = ActiveSupport::JSON.decode(raw_post)
+
+      # Transform camelCase param keys to snake_case
+      if data.is_a?(Array)
+        data.map { |item| item.deep_transform_keys!(&:underscore) }
+      else
+        data.deep_transform_keys!(&:underscore)
+      end
+
+      # Return data
+      data.is_a?(Hash) ? data : { '_json': data }
+    }
+    # active_model_serializersのkeyをcamel_lowerに変換する
+    ActiveModelSerializers.config.key_transform = :camel_lower
   end
 end

@@ -14,6 +14,7 @@ class Api::V1::ConditionsController < ApplicationController
   def create
     @condition = Condition.new(condition_params)
     @condition.save
+    render json: @condition, serializer: ConditionSerializer
   end
 
   def update
