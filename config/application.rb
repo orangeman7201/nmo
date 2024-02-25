@@ -43,10 +43,12 @@ module Sample
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         # 本番環境ができたらoriginsに追加する
+        # Todo: csrfの方もexposeで対応できるようにする
         origins 'localhost:3001'
         resource '*',
           headers: :any,
           methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          expose: %w[access-token uid client],
           credentials: true
       end
     end
