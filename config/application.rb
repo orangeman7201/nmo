@@ -48,6 +48,7 @@ module Sample
         resource '*',
           headers: :any,
           methods: [:get, :post, :put, :patch, :delete, :options, :head],
+          expose: %w[access-token uid client],
           credentials: true
       end
     end
