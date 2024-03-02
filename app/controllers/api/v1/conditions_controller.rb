@@ -2,8 +2,7 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   before_action :set_condition, only: [:show, :update, :destroy]
 
   def index
-    @conditions = Condition.all
-    # Todo: userログインができたらuserで絞る
+    @conditions = current_user.conditions
     render json: @conditions, each_serializer: ConditionSerializer
   end
 
@@ -12,7 +11,7 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   end
 
   def create
-    @condition = Condition.new(condition_params)
+    @condition = current_user.conditions.build(condition_params)
     @condition.save
     render json: @condition, serializer: ConditionSerializer
   end
@@ -32,6 +31,6 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   end
 
   def set_condition
-    @condition = Condition.find(params[:id])
+    @condition = current_user.conditions.find(params[:id])
   end
 end
