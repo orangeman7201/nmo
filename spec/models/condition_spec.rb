@@ -5,7 +5,8 @@ RSpec.describe Condition, type: :model do
     subject { condition.valid? }
 
     context 'detail' do
-      let!(:condition) { build(:condition, detail: detail) }
+      let(:condition) { build(:condition, detail: detail, user: user) }
+      let(:user) { create(:user) }
 
       context 'true' do
         let(:detail) { '症状の詳細' }
@@ -19,7 +20,8 @@ RSpec.describe Condition, type: :model do
     end
 
     context 'occurred_date' do
-      let!(:condition) { build(:condition, occurred_date: occurred_date) }
+      let!(:condition) { build(:condition, occurred_date: occurred_date, user: user) }
+      let(:user) { create(:user) }
 
       context 'true' do
         let(:occurred_date) { '2024-01-01' }
@@ -29,6 +31,28 @@ RSpec.describe Condition, type: :model do
       context 'false' do
         let(:occurred_date) { nil }
         it { is_expected.to be_falsey }
+      end
+    end
+  end
+
+  describe 'scope' do
+    describe 'in_target_month' do
+      subject { Condition.in_target_month(target_month) }
+
+      before do
+        create(:condition, occurred_date: '2024-01-01', user: create(:user))
+        create(:condition, occurred_date: '2024-01-31', user: create(:user))
+        create(:condition, occurred_date: '2024-02-01', user: create(:user))
+      end
+
+      context '2024-01' do
+        let(:target_month) { '2024-01-01' }
+        it { expect(subject.count).to eq 2 }
+      end
+
+      context '2024-02' do
+        let(:target_month) { '2024-02-01' }
+        it { expect(subject.count).to eq 1 }
       end
     end
   end
