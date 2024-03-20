@@ -2,7 +2,7 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   before_action :set_condition, only: [:show, :update, :destroy]
 
   def index
-    @conditions = current_user.conditions
+    @conditions = current_user.conditions.in_target_month(get_condition_params[:target_month])
     render json: @conditions, each_serializer: ConditionSerializer
   end
 
@@ -25,6 +25,10 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   end
 
   private
+
+  def get_condition_params
+    params.permit(:target_month)
+  end
 
   def condition_params
     params.require(:condition).permit(:detail, :occurred_date)
