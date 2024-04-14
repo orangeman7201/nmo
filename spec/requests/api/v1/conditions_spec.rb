@@ -27,13 +27,27 @@ RSpec.describe "Api::V1::Conditions", type: :request do
 
       context 'userに紐づくデータがあるとき' do
         before do
-          create_list(:condition, 3, user: user)
+          create_list(:condition, 3, user: user, occurred_date: '2024-01-01')
         end
 
-        it '全てのデータが取得できること' do
-          subject
-          json = JSON.parse(response.body)
-          expect(json.length).to eq 3
+        context 'target_monthで指定されているとき' do
+          subject { get "/api/v1/conditions", params: { target_month: '2024-01-01' }, headers: token }
+
+          it '全てのデータが取得できること'  do
+            subject
+            json = JSON.parse(response.body)
+            expect(json.length).to eq 3
+          end
+        end
+
+        context 'target_monthで指定されていないとき' do
+          subject { get "/api/v1/conditions", params: { target_month: '2024-02-01' }, headers: token }
+
+          it '空の配列が返却されること' do
+            subject
+            json = JSON.parse(response.body)
+            expect(json.length).to eq 0
+          end
         end
       end
 

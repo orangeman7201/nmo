@@ -33,6 +33,21 @@ RSpec.describe Condition, type: :model do
         it { is_expected.to be_falsey }
       end
     end
+
+    context 'strength' do
+      let(:condition) { build(:condition, strength: strength, user: user) }
+      let(:user) { create(:user) }
+
+      context 'true' do
+        let(:strength) { 1 }
+        it { is_expected.to be_truthy }
+      end
+
+      context 'false' do
+        let(:strength) { nil }
+        it { is_expected.to be_falsey }
+      end
+    end
   end
 
   describe 'scope' do
