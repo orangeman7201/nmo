@@ -31,7 +31,7 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   end
 
   def condition_params
-    params.require(:condition).permit(:detail, :occurred_date)
+    params.require(:condition).permit(:detail, :occurred_date, :strength, :memo)
   end
 
   def set_condition
