@@ -1,0 +1,36 @@
+name: Run Rubocop and RSpec Actions
+on: pull_request
+
+jobs:
+  Job-RSpec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:13
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby Env
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.1.4'
+          bundler-cache: true
+
+      - name: Database create
+        run: bundle exec rails db:create RAILS_ENV=test
+
+      - name: Database migrate
+        run: bundle exec rails db:migrate RAILS_ENV=test
+
+      - name: Run tests
+        run: bundle exec rspec
