@@ -120,7 +120,6 @@ GEM
       railties (>= 6.1)
     drb (2.2.0)
       ruby2_keywords
-    error_highlight (0.5.1)
     erubi (1.12.0)
     event_stream_parser (1.0.0)
     factory_bot (6.4.6)
@@ -302,7 +301,6 @@ DEPENDENCIES
   devise-i18n
   devise_token_auth (>= 1.2.0)!
   dotenv-rails
-  error_highlight (>= 0.4.0)
   factory_bot_rails
   faker
   importmap-rails
