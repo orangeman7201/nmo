@@ -4,7 +4,6 @@ class Condition < ApplicationRecord
   validates :strength, presence: true
 
   belongs_to :user
-  belongs_to :consultation_report
 
   scope :in_target_month , -> (target_month) do
     month = target_month&.to_date || Time.current
