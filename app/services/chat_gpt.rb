@@ -16,7 +16,6 @@ class ChatGpt
         max_tokens: 200,  # 応答の長さを指定
       },
       )
-    debugger
     response.dig('choices', 0, 'message', 'content')
   end
 end
