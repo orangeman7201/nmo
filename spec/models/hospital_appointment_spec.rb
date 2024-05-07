@@ -19,4 +19,26 @@ RSpec.describe HospitalAppointment, type: :model do
       end
     end
   end
+
+  describe 'instance method' do
+    context '#previous_hospital_appointment' do
+      subject { hospital_appointment.previous_hospital_appointment }
+      let(:user) { create(:user) }
+      let(:hospital_appointment) { create(:hospital_appointment, consultation_date: '2024-04-16', user: user) }
+
+      context '前のhospital_appointmentがある場合' do
+        let!(:previous_hospital_appointment) { create(:hospital_appointment, consultation_date: '2024-04-15', user: user) }
+
+        it '前のhospital_appointmentが取得できる' do
+          expect(subject).to eq previous_hospital_appointment
+        end
+      end
+
+      context '前のhospital_appointmentがない場合' do
+        it 'nilが返る' do
+          expect(subject).to be_nil
+        end
+      end
+    end
+  end
 end
