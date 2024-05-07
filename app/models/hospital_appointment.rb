@@ -8,4 +8,9 @@ class HospitalAppointment < ApplicationRecord
     month = target_month&.to_date || Time.current
     where(consultation_date: month.to_date.all_month)
   end
+
+  # 一つ前のhospital_appointmentを取得するメソッド
+  def previous_hospital_appointment
+    user.hospital_appointments.where("consultation_date < ?", consultation_date).order(consultation_date: :desc).first
+  end
 end

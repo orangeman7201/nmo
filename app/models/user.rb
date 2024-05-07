@@ -10,4 +10,9 @@ class User < ActiveRecord::Base
   has_many :conditions
   has_many :hospital_appointments
   has_many :consultation_reports
+
+  # hospital_appointmentが2つ以上あればtrueを返すメソッド
+  def have_hospital_appointments?
+    hospital_appointments.count >= 2
+  end
 end
