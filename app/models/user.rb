@@ -9,4 +9,5 @@ class User < ActiveRecord::Base
 
   has_many :conditions
   has_many :hospital_appointments
+  has_many :consultation_reports
 end
