@@ -3,7 +3,16 @@ class Api::V1::HospitalAppointmentsController < Api::V1::BaseController
 
   def index
     @hospital_appointments = current_user.hospital_appointments.in_target_month(get_hospital_appointment_params[:target_month])
-    render json: @hospital_appointments, each_serializer: HospitalAppointmentSerializer
+    
+    # Include consultation_report information with each hospital appointment
+    appointments_with_reports = @hospital_appointments.map do |appointment|
+      appointment_json = HospitalAppointmentSerializer.new(appointment).as_json
+      appointment_json[:has_report] = appointment.consultation_report.present?
+      appointment_json[:report_id] = appointment.consultation_report&.id
+      appointment_json
+    end
+    
+    render json: appointments_with_reports
   end
 
   def show
