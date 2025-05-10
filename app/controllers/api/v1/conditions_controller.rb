@@ -23,6 +23,19 @@ class Api::V1::ConditionsController < Api::V1::BaseController
   def destroy
     @condition.destroy
   end
+  
+  def up_to_date
+    end_date = params[:end_date]
+    @conditions = current_user.conditions.up_to_date(end_date).order(occurred_date: :desc)
+    render json: @conditions, each_serializer: ConditionSerializer
+  end
+  
+  def between_dates
+    start_date = params[:start_date]
+    end_date = params[:end_date]
+    @conditions = current_user.conditions.between_dates(start_date, end_date).order(occurred_date: :desc)
+    render json: @conditions, each_serializer: ConditionSerializer
+  end
 
   private
 
