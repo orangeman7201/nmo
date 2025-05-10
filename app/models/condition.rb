@@ -10,4 +10,12 @@ class Condition < ApplicationRecord
     month = target_month&.to_date || Time.current
     where(occurred_date: month.to_date.all_month)
   end
+  
+  scope :up_to_date, -> (end_date) do
+    where('occurred_date <= ?', end_date.to_date)
+  end
+  
+  scope :between_dates, -> (start_date, end_date) do
+    where(occurred_date: start_date.to_date..end_date.to_date)
+  end
 end
