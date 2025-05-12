@@ -68,10 +68,6 @@ class Api::V1::ConsultationReportsController < Api::V1::BaseController
   end
   
   def format_conditions_for_prompt(conditions)
-    formatted_conditions = conditions.map do |condition|
-      "日付: #{condition.occurred_date}, 症状: #{condition.detail}, 強さ: #{condition.strength}, メモ: #{condition.memo}"
-    end.join("\n")
-    
-    "以下の症状情報を30秒以内で読める簡潔な要約にしてください。要約は日本語のJSONフォーマットで返してください。JSONには「summary」と「details」のフィールドを含めてください。\n\n#{formatted_conditions}"
+    conditions.select(:detail, :occurred_date, :strength, :memo).to_json
   end
 end
