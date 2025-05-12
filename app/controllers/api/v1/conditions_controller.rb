@@ -24,6 +24,21 @@ class Api::V1::ConditionsController < Api::V1::BaseController
     @condition.destroy
   end
 
+  # 指定された日付までの体調情報を取得
+  def up_to_date
+    end_date = params[:end_date].to_date
+    @conditions = current_user.conditions.where("occurred_date <= ?", end_date).order(occurred_date: :desc)
+    render json: @conditions, each_serializer: ConditionSerializer
+  end
+
+  # 指定された日付範囲内の体調情報を取得
+  def between_dates
+    start_date = params[:start_date].to_date
+    end_date = params[:end_date].to_date
+    @conditions = current_user.conditions.where(occurred_date: start_date..end_date).order(occurred_date: :desc)
+    render json: @conditions, each_serializer: ConditionSerializer
+  end
+
   private
 
   def get_condition_params
