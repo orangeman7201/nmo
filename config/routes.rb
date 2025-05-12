@@ -5,7 +5,11 @@ Rails.application.routes.draw do
       mount_devise_token_auth_for 'User', at: 'auth'
       resources :conditions
       resources :hospital_appointments
-      resources :consultation_reports
+      resources :consultation_reports do
+        member do
+          post :generate_ai_summary
+        end
+      end
     end
   end
 
