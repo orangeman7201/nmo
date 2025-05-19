@@ -19,23 +19,42 @@ class Api::V1::ConsultationReportsController < Api::V1::BaseController
 
   def update
     @consultation_report.update(consultation_report_params)
+    render json: @consultation_report, serializer: ConsultationReportSerializer
   end
 
   def destroy
     @consultation_report.destroy
   end
 
-  # AIによる気になることのまとめを生成するエンドポイント
   def generate_ai_summary
-    # 実際のAI要約処理は次のタスクで実装
-    # 現時点では、仮のレスポンスを返す
-    @consultation_report.update(condition_summary: "AI要約は次のタスクで実装されます。")
+    # 関連する体調情報を取得
+    conditions = current_user.conditions.where(occurred_date: @consultation_report.start_date..@consultation_report.end_date)
     
-    render json: { 
-      success: true, 
-      message: "AI要約が生成されました", 
-      condition_summary: @consultation_report.condition_summary 
-    }
+    if conditions.empty?
+      render json: { success: false, message: '要約するための体調情報がありません。' }, status: :unprocessable_entity
+      return
+    end
+    
+    # 体調情報をプロンプト用にフォーマット
+    prompt = format_conditions_for_prompt(conditions)
+    
+    # ChatGptを使用して要約を生成
+    chat_gpt = ChatGpt.new
+    begin
+      summary = chat_gpt.chat(prompt)
+      
+      # 要約を保存
+      @consultation_report.update(condition_summary: summary)
+      
+      render json: { 
+        success: true, 
+        message: 'AI要約が生成されました。', 
+        condition_summary: summary 
+      }
+    rescue => e
+      Rails.logger.error("AI要約の生成に失敗しました: #{e.message}")
+      render json: { success: false, message: 'AI要約の生成に失敗しました。' }, status: :unprocessable_entity
+    end
   end
 
   private
@@ -46,5 +65,9 @@ class Api::V1::ConsultationReportsController < Api::V1::BaseController
 
   def set_consultation_report
     @consultation_report = current_user.consultation_reports.find(params[:id])
+  end
+  
+  def format_conditions_for_prompt(conditions)
+    conditions.select(:detail, :occurred_date, :strength, :memo).to_json
   end
 end

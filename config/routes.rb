@@ -12,7 +12,7 @@ Rails.application.routes.draw do
       resources :hospital_appointments
       resources :consultation_reports do
         member do
-          post 'generate_ai_summary'
+          post :generate_ai_summary
         end
       end
     end
